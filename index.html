@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Channel Idea Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --text-color: #333;
+            --bg-color: #f5f7fa;
+            --card-bg: #ffffff;
+            --border-color: #ddd;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --success-color: #27ae60;
+        }
+
+        /* Dark Mode Variables */
+        .dark-mode {
+            --text-color: #ecf0f1;
+            --bg-color: #1a1a2e;
+            --card-bg: #16213e;
+            --border-color: #0f3460;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --dark-color: #ecf0f1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .header-left {
+            flex: 1;
+        }
+
+        h1 {
+            color: var(--dark-color);
+            margin-bottom: 5px;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-color);
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .progress-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            margin-bottom: 30px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .progress-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+
+        .progress-percentage {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .progress-bar {
+            height: 30px;
+            background-color: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 15px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .channels-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .channel-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 6px solid;
+            position: relative;
+        }
+
+        .channel-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px var(--shadow-color);
+        }
+
+        .channel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .channel-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .channel-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .channel-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .idea-box {
+            margin-bottom: 25px;
+        }
+
+        .idea-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--dark-color);
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+            transition: border-color 0.3s;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .status-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .checkbox-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .checkbox-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .checkbox {
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+
+        .finished-checkbox {
+            accent-color: var(--secondary-color);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e67e22;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #219653;
+            transform: translateY(-2px);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .channels-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .channel-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .channel-item:last-child {
+            border-bottom: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--border-color);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-color);
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark-color);
+        }
+
+        /* Channel Color Classes */
+        .channel-color-1 { border-left-color: #e74c3c; }
+        .channel-color-2 { border-left-color: #9b59b6; }
+        .channel-color-3 { border-left-color: #3498db; }
+        .channel-color-4 { border-left-color: #2ecc71; }
+        .channel-color-5 { border-left-color: #f39c12; }
+        .channel-color-6 { border-left-color: #1abc9c; }
+        .channel-color-7 { border-left-color: #e67e22; }
+        .channel-color-8 { border-left-color: #34495e; }
+        .channel-color-9 { border-left-color: #d35400; }
+        .channel-color-10 { border-left-color: #16a085; }
+
+        @media (max-width: 768px) {
+            .channels-container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .header-controls {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                margin-top: 15px;
+            }
+            
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <h1><i class="fas fa-video"></i> Video Channel Idea Tracker</h1>
+                <p class="subtitle">Plan, track, and manage your video production workflow</p>
+            </div>
+            <div class="header-controls">
+                <button class="btn btn-secondary" id="settingsBtn">
+                    <i class="fas fa-cog"></i> Settings
+                </button>
+                <button class="theme-toggle" id="themeToggle" title="Toggle dark mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-header">
+                <div class="progress-title">Overall Progress</div>
+                <div class="progress-percentage" id="progressPercentage">0%</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <div class="progress-labels">
+                <span>All Set: 30% of total</span>
+                <span>Finished: 70% of total</span>
+            </div>
+        </div>
+        
+        <div class="channels-container" id="channelsContainer">
+            <!-- Channels will be dynamically added here -->
+        </div>
+        
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <i class="fas fa-video-slash"></i>
+            <h3>No channels yet</h3>
+            <p>Add your first channel using the settings button to get started!</p>
+        </div>
+        
+        <footer>
+            <p>Video Channel Idea Tracker &copy; 2023 | All data is saved locally in your browser</p>
+            <p><i class="fas fa-info-circle"></i> Progress: All Set adds 30% per channel, Finished adds 70% per channel</p>
+        </footer>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-cog"></i> Settings</h3>
+                <button class="close-modal" id="closeSettings">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Add New Channel</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="newChannelName" class="form-control" placeholder="Channel name">
+                    <button class="btn btn-success" id="addChannelBtn">Add</button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Manage Existing Channels</label>
+                <div class="channels-list" id="channelsList">
+                    <!-- Channels list will be populated here -->
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Data Management</label>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" id="saveDataBtn">
+                        <i class="fas fa-save"></i> Save All Data
+                    </button>
+                    <button class="btn btn-secondary" id="loadDataBtn">
+                        <i class="fas fa-download"></i> Load Saved Data
+                    </button>
+                    <button class="btn btn-danger" id="clearDataBtn">
+                        <i class="fas fa-trash"></i> Clear All Data
+                    </button>
+                </div>
+                <p style="margin-top: 10px; font-size: 0.9rem; opacity: 0.8;">
+                    <i class="fas fa-info-circle"></i> Data is automatically saved as you work
+                </p>
+            </div>
+            
+            <div class="form-actions">
+                <button class="btn btn-primary" id="closeModalBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Default channels (as per your request)
+        const defaultChannels = [
+            { id: 1, name: "AITA", colorClass: "channel-color-1" },
+            { id: 2, name: "NARRATOR", colorClass: "channel-color-2" },
+            { id: 3, name: "SHADOWFOOTBAL", colorClass: "channel-color-3" },
+            { id: 4, name: "AZFOOT11", colorClass: "channel-color-4" },
+            { id: 5, name: "F.FOOTBALL", colorClass: "channel-color-5" },
+            { id: 6, name: "ZEROFOOTBALL", colorClass: "channel-color-6" }
+        ];
+        
+        // App state
+        let channels = [];
+        let nextChannelId = 7; // Start after default channels
+        let isDarkMode = false;
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAppState();
+            renderChannels();
+            updateProgress();
+            
+            // Event listeners
+            document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
+            document.getElementById('closeSettings').addEventListener('click', closeSettingsModal);
+            document.getElementById('closeModalBtn').addEventListener('click', closeSettingsModal);
+            document.getElementById('themeToggle').addEventListener('click', toggleDarkMode);
+            document.getElementById('addChannelBtn').addEventListener('click', addNewChannel);
+            document.getElementById('saveDataBtn').addEventListener('click', saveAllData);
+            document.getElementById('loadDataBtn').addEventListener('click', loadSavedData);
+            document.getElementById('clearDataBtn').addEventListener('click', clearAllData);
+            
+            // Close modal when clicking outside
+            document.getElementById('settingsModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeSettingsModal();
+                }
+            });
+            
+            // Load channels list in settings
+            updateChannelsList();
+        });
+        
+        // Load app state from localStorage
+        function loadAppState() {
+            // Load channels
+            const savedChannels = localStorage.getItem('channels');
+            if (savedChannels) {
+                channels = JSON.parse(savedChannels);
+                // Update nextChannelId based on existing channels
+                if (channels.length > 0) {
+                    nextChannelId = Math.max(...channels.map(c => c.id)) + 1;
+                }
+            } else {
+                // Use default channels
+                channels = [...defaultChannels];
+                saveToLocalStorage();
+            }
+            
+            // Load dark mode setting
+            const savedDarkMode = localStorage.getItem('darkMode');
+            if (savedDarkMode === 'true') {
+                isDarkMode = true;
+                document.body.classList.add('dark-mode');
+                document.getElementById('themeToggle').innerHTML = '<i class="fas fa-sun"></i>';
+            }
+        }
+        
+        // Save app state to localStorage
+        function saveToLocalStorage() {
+            localStorage.setItem('channels', JSON.stringify(channels));
+            localStorage.setItem('darkMode', isDarkMode.toString());
+        }
+        
+        // Render all channels
+        function renderChannels() {
+            const container = document.getElementById('channelsContainer');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (channels.length === 0) {
+                container.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            container.innerHTML = '';
+            
+            channels.forEach(channel => {
+                const channelCard = document.createElement('div');
+                channelCard.className = `channel-card ${channel.colorClass}`;
+                channelCard.innerHTML = `
+                    <div class="channel-header">
+                        <div>
+                            <span class="channel-number">${channel.id}</span>
+                            <span class="channel-name">${channel.name}</span>
+                        </div>
+                        <div class="channel-actions">
+                            <button class="btn btn-danger btn-sm delete-channel" data-id="${channel.id}" title="Delete channel">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="idea-box">
+                        <label class="idea-label" for="idea-${channel.id}">Video Idea:</label>
+                        <textarea 
+                            id="idea-${channel.id}" 
+                            placeholder="Describe your video idea here... Include details about footage needed, concept, etc."
+                            data-channel="${channel.id}">${channel.idea || ''}</textarea>
+                    </div>
+                    
+                    <div class="status-box">
+                        <div class="checkbox-container">
+                            <label class="checkbox-label">All Set</label>
+                            <input type="checkbox" class="checkbox all-set-checkbox" 
+                                   id="all-set-${channel.id}" 
+                                   data-channel="${channel.id}"
+                                   ${channel.allSet ? 'checked' : ''}>
+                            <small style="margin-top: 5px; opacity: 0.7;">Footages & Resources Found (30% progress)</small>
+                        </div>
+                        
+                        <div class="checkbox-container">
+                            <label class="checkbox-label">Finished</label>
+                            <input type="checkbox" class="checkbox finished-checkbox" 
+                                   id="finished-${channel.id}" 
+                                   data-channel="${channel.id}"
+                                   ${channel.finished ? 'checked' : ''}>
+                            <small style="margin-top: 5px; opacity: 0.7;">Project Completed (70% progress)</small>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(channelCard);
+            });
+            
+            // Add event listeners to new elements
+            attachChannelEventListeners();
+        }
+        
+        // Attach event listeners to channel elements
+        function attachChannelEventListeners() {
+            // Textarea change events
+            document.querySelectorAll('textarea').forEach(textarea => {
+                textarea.addEventListener('input', function() {
+                    const channelId = parseInt(this.dataset.channel);
+                    updateChannelData(channelId, 'idea', this.value);
+                });
+            });
+            
+            // Checkbox change events
+            document.querySelectorAll('.all-set-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const channelId = parseInt(this.dataset.channel);
+                    updateChannelData(channelId, 'allSet', this.checked);
+                    
+                    // If finished is checked but all-set is unchecked, uncheck finished
+                    if (!this.checked) {
+                        const finishedCheckbox = document.getElementById(`finished-${channelId}`);
+                        if (finishedCheckbox && finishedCheckbox.checked) {
+                            finishedCheckbox.checked = false;
+                            updateChannelData(channelId, 'finished', false);
+                        }
+                    }
+                    
+                    updateProgress();
+                });
+            });
+            
+            document.querySelectorAll('.finished-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const channelId = parseInt(this.dataset.channel);
+                    updateChannelData(channelId, 'finished', this.checked);
+                    
+                    // If finished is checked, also check all-set
+                    if (this.checked) {
+                        const allSetCheckbox = document.getElementById(`all-set-${channelId}`);
+                        if (allSetCheckbox && !allSetCheckbox.checked) {
+                            allSetCheckbox.checked = true;
+                            updateChannelData(channelId, 'allSet', true);
+                        }
+                    }
+                    
+                    updateProgress();
+                });
+            });
+            
+            // Delete channel buttons
+            document.querySelectorAll('.delete-channel').forEach(button => {
+                button.addEventListener('click', function() {
+                    const channelId = parseInt(this.dataset.id);
+                    if (confirm(`Are you sure you want to delete channel ${channelId}?`)) {
+                        deleteChannel(channelId);
+                    }
+                });
+            });
+        }
+        
+        // Update channel data in the state
+        function updateChannelData(channelId, property, value) {
+            const channel = channels.find(c => c.id === channelId);
+            if (channel) {
+                channel[property] = value;
+                saveToLocalStorage();
+            }
+        }
+        
+        // Calculate and update progress
+        function updateProgress() {
+            if (channels.length === 0) {
+                document.getElementById('progressPercentage').textContent = '0%';
+                document.getElementById('progressFill').style.width = '0%';
+                return;
+            }
+            
+            let progress = 0;
+            
+            channels.forEach(channel => {
+                if (channel.allSet) {
+                    progress += 30 / channels.length;
+                }
+                if (channel.finished) {
+                    progress += 70 / channels.length;
+                }
+            });
+            
+            // Ensure progress doesn't exceed 100%
+            progress = Math.min(progress, 100);
+            
+            // Round to 1 decimal place
+            const roundedProgress = Math.round(progress * 10) / 10;
+            
+            document.getElementById('progressPercentage').textContent = `${roundedProgress}%`;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            
+            // Update progress fill text
+            const progressFill = document.getElementById('progressFill');
+            progressFill.textContent = progress >= 10 ? `${roundedProgress}%` : '';
+        }
+        
+        // Settings modal functions
+        function openSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'flex';
+            updateChannelsList();
+        }
+        
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+        
+        function updateChannelsList() {
+            const channelsList = document.getElementById('channelsList');
+            
+            if (channels.length === 0) {
+                channelsList.innerHTML = '<div style="text-align: center; padding: 20px; opacity: 0.7;">No channels yet</div>';
+                return;
+            }
+            
+            channelsList.innerHTML = '';
+            
+            channels.forEach(channel => {
+                const channelItem = document.createElement('div');
+                channelItem.className = 'channel-item';
+                channelItem.innerHTML = `
+                    <span>${channel.name} (ID: ${channel.id})</span>
+                    <button class="btn btn-danger btn-sm delete-channel-list" data-id="${channel.id}">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                `;
+                channelsList.appendChild(channelItem);
+            });
+            
+            // Add event listeners to delete buttons in the list
+            document.querySelectorAll('.delete-channel-list').forEach(button => {
+                button.addEventListener('click', function() {
+                    const channelId = parseInt(this.dataset.id);
+                    if (confirm(`Are you sure you want to delete channel ${channelId}?`)) {
+                        deleteChannel(channelId);
+                        updateChannelsList();
+                    }
+                });
+            });
+        }
+        
+        // Add new channel
+        function addNewChannel() {
+            const channelNameInput = document.getElementById('newChannelName');
+            const channelName = channelNameInput.value.trim();
+            
+            if (!channelName) {
+                alert('Please enter a channel name');
+                return;
+            }
+            
+            // Check if channel name already exists
+            if (channels.some(channel => channel.name === channelName)) {
+                alert('A channel with this name already exists');
+                return;
+            }
+            
+            // Determine color class (cycle through available colors)
+            const colorIndex = (nextChannelId - 1) % 10 + 1;
+            
+            const newChannel = {
+                id: nextChannelId,
+                name: channelName,
+                colorClass: `channel-color-${colorIndex}`,
+                idea: '',
+                allSet: false,
+                finished: false
+            };
+            
+            channels.push(newChannel);
+            nextChannelId++;
+            
+            // Clear input
+            channelNameInput.value = '';
+            
+            // Update UI and save
+            saveToLocalStorage();
+            renderChannels();
+            updateChannelsList();
+            updateProgress();
+            
+            // Show success message
+            alert(`Channel "${channelName}" added successfully!`);
+        }
+        
+        // Delete channel
+        function deleteChannel(channelId) {
+            channels = channels.filter(channel => channel.id !== channelId);
+            
+            // Update UI and save
+            saveToLocalStorage();
+            renderChannels();
+            updateChannelsList();
+            updateProgress();
+        }
+        
+        // Toggle dark mode
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode', isDarkMode);
+            
+            // Update icon
+            const themeToggle = document.getElementById('themeToggle');
+            themeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            
+            saveToLocalStorage();
+        }
+        
+        // Save all data (explicit save)
+        function saveAllData() {
+            saveToLocalStorage();
+            alert('All data has been saved successfully!');
+        }
+        
+        // Load saved data
+        function loadSavedData() {
+            loadAppState();
+            renderChannels();
+            updateProgress();
+            alert('Data loaded successfully!');
+        }
+        
+        // Clear all data
+        function clearAllData() {
+            if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+                localStorage.clear();
+                channels = [...defaultChannels];
+                nextChannelId = 7;
+                isDarkMode = false;
+                document.body.classList.remove('dark-mode');
+                document.getElementById('themeToggle').innerHTML = '<i class="fas fa-moon"></i>';
+                
+                renderChannels();
+                updateProgress();
+                updateChannelsList();
+                
+                alert('All data has been cleared. Default channels restored.');
+            }
+        }
+    </script>
+</body>
+</html>
